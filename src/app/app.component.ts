@@ -141,6 +141,9 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Set loginInProgress to true immediately
+    this.loginInProgress = true;
+
     // Store current URL before login redirect if it's not the home page
     if (this.router.url !== '/' && this.router.url !== '/home') {
       console.log('DEBUG: Storing URL before login:', this.router.url);
@@ -154,6 +157,8 @@ export class AppComponent implements OnInit, OnDestroy {
         } else {
           console.error('Error during login:', error);
         }
+        // Reset loginInProgress if there's an error
+        this.loginInProgress = false;
       }
     });
   }
@@ -163,6 +168,9 @@ export class AppComponent implements OnInit, OnDestroy {
       console.log('Cannot logout while login is in progress');
       return;
     }
+
+    // Set loginInProgress to true during logout
+    this.loginInProgress = true;
 
     try {
       // Clear any stored redirect URL
@@ -195,6 +203,9 @@ export class AppComponent implements OnInit, OnDestroy {
       console.error('Error during logout:', error);
       // Try to recover state
       this.checkAndSetActiveAccount();
+    } finally {
+      // Reset loginInProgress after logout attempts
+      this.loginInProgress = false;
     }
   }
 }

@@ -11,10 +11,18 @@
       <a routerLink="/admin" routerLinkActive="active">Admin</a>
     </div>
     <div class="auth-buttons">
-      <button *ngIf="!isLoggedIn" (click)="login()" [disabled]="loginInProgress">
-        {{ loginInProgress ? 'Logging in...' : 'Login' }}
+      <button *ngIf="!isLoggedIn" (click)="login()" [disabled]="loginInProgress" class="login-button">
+        <span *ngIf="!loginInProgress">Login</span>
+        <span *ngIf="loginInProgress" class="spinner-text">
+          <span class="spinner"></span> Logging in...
+        </span>
       </button>
-      <button *ngIf="isLoggedIn" (click)="logout()" [disabled]="loginInProgress">Logout</button>
+      <button *ngIf="isLoggedIn" (click)="logout()" [disabled]="loginInProgress" class="logout-button">
+        <span *ngIf="!loginInProgress">Logout</span>
+        <span *ngIf="loginInProgress" class="spinner-text">
+          <span class="spinner"></span> Logging out...
+        </span>
+      </button>
     </div>
   </nav>
 
