@@ -1,0 +1,8 @@
+{
+    "environment": "local",
+    "logLevel": "debug",
+    "entraIdAuth": {
+        "clientId": "",
+        "tenantId": ""
+    }
+}
