@@ -1,5 +1,11 @@
 # AngularConfigMsalExample
 
+This is an example codebase demonstrating the following:
+1. New Angular v19 app with standalone components
+2. Externalized configuration
+3. Use of MSAL for authentication & authorization.
+
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.3.
 
 ## Development server
