@@ -1,12 +1,31 @@
-<div class="admin-container">
-  <h2>Admin Dashboard</h2>
-  <p>Welcome to the protected admin area!</p>
-  <div class="admin-content">
-    <p>This page is only accessible to authenticated users.</p>
+<div class="page-container">
+  <div class="admin-header">
+    <h2>Admin Dashboard</h2>
+    <div class="header-underline"></div>
+    <p class="admin-subtitle">Welcome to the protected admin area!</p>
   </div>
-
-  <div class="config-info">
-    <h2>Configuration</h2>
-    <pre>{{ config | json }}</pre>
+  
+  <div class="admin-panel">
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-icon secure-icon"></div>
+        <h3>Protected Content</h3>
+      </div>
+      <div class="card-content">
+        <p>This page is only accessible to authenticated users. If you can see this content, your authentication was successful.</p>
+      </div>
+    </div>
+    
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-icon config-icon"></div>
+        <h3>Current Configuration</h3>
+      </div>
+      <div class="card-content">
+        <div class="config-container">
+          <pre>{{ config | json }}</pre>
+        </div>
+      </div>
+    </div>
   </div>
 </div> 

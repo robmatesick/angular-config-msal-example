@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ConfigService } from './services/config.service';
@@ -38,6 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
   userInfo: UserInfo | null = null;
   private readonly _destroying$ = new Subject<void>();
   private redirectUrl: string | null = null;
+  isDropdownOpen = false;
 
   constructor(
     private configService: ConfigService,
@@ -223,5 +224,20 @@ export class AppComponent implements OnInit, OnDestroy {
       // Reset loginInProgress after logout attempts
       this.loginInProgress = false;
     }
+  }
+
+  toggleDropdown(event?: MouseEvent): void {
+    if (event) {
+      // Stop event from propagating to document
+      event.stopPropagation();
+    }
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Close dropdown when clicking outside
+    this.isDropdownOpen = false;
   }
 }

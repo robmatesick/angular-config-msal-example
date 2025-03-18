@@ -1,7 +1,30 @@
-<div class="home-container">
-  <h2>Welcome to the Home Page</h2>
-  <p>This is a public page that anyone can access.</p>
-  <div class="navigation">
-    <a routerLink="/admin" class="admin-link">Go to Admin Dashboard</a>
+<div class="page-container">
+  <div class="welcome-card">
+    <div class="welcome-header">
+      <h2>Welcome to MSAL Example</h2>
+      <div class="welcome-underline"></div>
+    </div>
+    <p class="welcome-text">This is a public page that demonstrates Microsoft Authentication Library integration with Angular.</p>
+    
+    <div class="feature-section">
+      <div class="feature-item">
+        <div class="feature-icon secure-icon"></div>
+        <h3>Secure Authentication</h3>
+        <p>Integrated with Microsoft Identity Platform for robust, enterprise-grade authentication.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon angular-icon"></div>
+        <h3>Modern Angular</h3>
+        <p>Built with the latest Angular features and best practices for optimal performance.</p>
+      </div>
+    </div>
+    
+    <div class="navigation-section">
+      <p>Ready to see protected content?</p>
+      <a routerLink="/admin" class="nav-button">
+        <span class="button-icon"></span>
+        Go to Admin Dashboard
+      </a>
+    </div>
   </div>
 </div> 

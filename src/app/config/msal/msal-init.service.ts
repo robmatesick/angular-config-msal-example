@@ -36,14 +36,17 @@ export function initializeApp(
 ) {
   return async () => {
     try {
+      // Start by clearing any potential redirect loops
+      resetRedirectCountIfNeeded();
+      
       await configService.loadConfig();
       const config = await configService.getConfig();
       
       if (logger) {
-        logger.info('Initializing MSAL with configuration');
-        logger.debug(`Using environment: ${config.environment}`);
+        logger.info('🚀 Initializing MSAL with configuration');
+        logger.debug(`🌎 Using environment: ${config.environment}`);
       } else {
-        console.log('Initializing MSAL with configuration');
+        console.log('🚀 Initializing MSAL with configuration');
       }
       
       // Create the custom navigation client that will store URLs during auth redirects
@@ -99,9 +102,9 @@ export function initializeApp(
       (msalService as any).instance = msalInstance;
       
       if (logger) {
-        logger.info('MSAL initialized successfully');
+        logger.info('✅ MSAL initialized successfully');
       } else {
-        console.log('MSAL initialized successfully');
+        console.log('✅ MSAL initialized successfully');
       }
 
       // Handle the redirect flow and navigation
@@ -110,32 +113,96 @@ export function initializeApp(
       // 2. Now we retrieve that URL and navigate to it after successful authentication
       await msalInstance.handleRedirectPromise().then((authResult: AuthenticationResult | null) => {
         if (authResult) {
+          // Authentication was successful
+          if (logger) {
+            logger.info('🔑 Authentication successful');
+          } else {
+            console.log('🔑 Authentication successful');
+          }
+          
+          // Get the stored redirect URL
           const redirectUrl = sessionStorage.getItem('redirectUrl');
+          
           if (redirectUrl) {
             if (logger) {
-              logger.debug(`MSAL navigating to stored path: ${redirectUrl}`);
+              logger.debug(`🔄 Navigating to stored path: ${redirectUrl}`);
             } else {
-              console.log('DEBUG: MSAL navigating to stored path:', redirectUrl);
+              console.log('🔄 Navigating to stored path:', redirectUrl);
             }
+            
+            // Clear the redirect URL from session storage
             sessionStorage.removeItem('redirectUrl');
-            router.navigate([redirectUrl]);
+            
+            // Perform the navigation
+            if (redirectUrl.includes('?')) {
+              // Handle URLs with query parameters
+              const [path, queryString] = redirectUrl.split('?');
+              const queryParams: { [key: string]: string } = {};
+              
+              // Parse query parameters into an object
+              new URLSearchParams(queryString).forEach((value, key) => {
+                queryParams[key] = value;
+              });
+              
+              // Navigate with query parameters
+              router.navigate([path], { queryParams });
+            } else {
+              // Simple navigation without query parameters
+              router.navigate([redirectUrl]);
+            }
+          } else {
+            if (logger) {
+              logger.debug('📍 No stored redirect path found, staying on current page');
+            } else {
+              console.log('📍 No stored redirect path found, staying on current page');
+            }
           }
+          
+          // Reset redirect count after successful authentication
+          resetRedirectCount();
         }
       }).catch((error) => {
         if (logger) {
-          logger.error('Error handling redirect:', error);
+          logger.error('❌ Error handling redirect:', error);
         } else {
-          console.error('Error handling redirect:', error);
+          console.error('❌ Error handling redirect:', error);
         }
+        
+        // In case of error, still clear the redirect count to avoid getting stuck
+        resetRedirectCount();
       });
       
     } catch (error) {
       if (logger) {
-        logger.error('Error initializing application:', error);
+        logger.error('❌ Error initializing application:', error);
       } else {
-        console.error('Error initializing application:', error);
+        console.error('❌ Error initializing application:', error);
       }
+      
+      // Reset redirect count in case of errors
+      resetRedirectCount();
+      
       throw error; // Re-throw to prevent app from loading with invalid config
     }
   };
+}
+
+/**
+ * Reset the redirect count in session storage.
+ * This helps prevent getting stuck in redirect loops.
+ */
+function resetRedirectCount(): void {
+  sessionStorage.removeItem('msalRedirectCount');
+}
+
+/**
+ * Reset the redirect count if it's excessively high.
+ * This is a safety measure to break potential redirect loops on application startup.
+ */
+function resetRedirectCountIfNeeded(): void {
+  const redirectCount = parseInt(sessionStorage.getItem('msalRedirectCount') || '0', 10);
+  if (redirectCount > 5) {
+    console.warn('⚠️ High redirect count detected on startup, resetting to prevent loops');
+    resetRedirectCount();
+  }
 } 
