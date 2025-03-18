@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { LoggingService } from './logging.service';
+import { BehaviorSubject } from 'rxjs';
 
 export interface UserProfile {
   displayName?: string;
@@ -19,6 +20,8 @@ export interface UserProfile {
 })
 export class UserProfileService {
   private currentProfile: UserProfile | null = null;
+  private readonly _profile$ = new BehaviorSubject<UserProfile | null>(null);
+  readonly profile$ = this._profile$.asObservable();
 
   constructor(
     private readonly msalService: MsalService,
@@ -36,6 +39,7 @@ export class UserProfileService {
       if (!currentAccount) {
         this.logger.warn('No active account found');
         this.currentProfile = null;
+        this._profile$.next(null);
         return null;
       }
       
@@ -53,10 +57,12 @@ export class UserProfileService {
         accessToken: currentAccount.idTokenClaims
       };
 
+      this._profile$.next(this.currentProfile);
       return this.currentProfile;
     } catch (error) {
       this.logger.error('Error loading user profile', error);
       this.currentProfile = null;
+      this._profile$.next(null);
       return null;
     }
   }
@@ -84,5 +90,6 @@ export class UserProfileService {
 
   clearProfile(): void {
     this.currentProfile = null;
+    this._profile$.next(null);
   }
 } 

@@ -38,6 +38,8 @@ body {
   top: 0;
   z-index: 100;
   padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header-content {
@@ -47,79 +49,64 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 70px;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
   h1 {
     margin: 0;
     font-size: 1.6rem;
     color: $primary-color;
     font-weight: 600;
   }
+
+  .welcome-message {
+    color: $text-light;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 }
 
 .main-nav {
   display: flex;
   align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   
-  .nav-links {
-    display: flex;
-    gap: 5px;
+  ::ng-deep {
+    .ant-menu {
+      background: transparent;
+      border: none;
+      line-height: 64px;
+    }
     
-    a {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      color: $text-light;
-      padding: 10px 15px;
-      border-radius: $border-radius;
-      transition: $transition;
-      font-weight: 500;
+    .ant-menu-item {
+      margin: 0 4px;
+      padding: 0 12px;
       
-      .nav-icon {
-        margin-right: 7px;
-        width: 18px;
-        height: 18px;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-      }
-      
-      .home-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666666'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-      }
-      
-      .admin-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666666'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
-      }
-      
-      &:hover {
-        background-color: rgba($primary-color, 0.05);
-        color: $primary-color;
+      a {
+        display: flex;
+        align-items: center;
+        color: $text-light;
+        text-decoration: none;
         
-        .home-icon {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-        }
-        
-        .admin-icon {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
+        i {
+          margin-right: 8px;
         }
       }
       
       &.active {
-        background-color: $primary-color;
-        color: white;
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
         
-        .home-icon {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-        }
-        
-        .admin-icon {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
-        }
-        
-        &:hover {
-          background-color: $primary-dark;
+        a {
+          color: $primary-color;
         }
       }
     }
@@ -289,34 +276,93 @@ body {
 // Responsive design
 @media (max-width: 768px) {
   .header-content {
-    flex-direction: column;
+    flex-direction: row;
     height: auto;
     padding: 15px 0;
+    justify-content: space-between;
   }
   
   .nav-brand {
-    margin-bottom: 15px;
+    flex: 1;
+    min-width: 200px;
   }
   
   .main-nav {
+    order: 3;
     width: 100%;
-    margin-bottom: 15px;
+    margin-top: 10px;
     
-    .nav-links {
-      width: 100%;
-      justify-content: center;
+    ::ng-deep {
+      .ant-menu {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .ant-menu-item {
+        margin: 0 2px;
+        padding: 0 8px;
+        
+        a {
+          font-size: 0.9rem;
+          
+          i {
+            margin-right: 4px;
+          }
+        }
+      }
     }
   }
   
   .auth-section {
-    width: 100%;
     display: flex;
+    align-items: center;
+  }
+  
+  .user-dropdown {
+    .dropdown-content {
+      position: fixed;
+      top: 70px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+      border-radius: 0 0 $border-radius $border-radius;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .nav-brand {
+    text-align: center;
     justify-content: center;
   }
   
-  .user-dropdown .dropdown-content {
-    width: 90%;
-    left: 5%;
-    right: 5%;
+  .main-nav {
+    margin-top: 15px;
+    
+    ::ng-deep {
+      .ant-menu {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .ant-menu-item {
+        width: 100%;
+        text-align: center;
+        margin: 2px 0;
+      }
+    }
+  }
+  
+  .auth-section {
+    justify-content: center;
+    margin-top: 15px;
   }
 }

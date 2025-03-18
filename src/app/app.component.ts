@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ConfigService } from './services/config.service';
 import { LoggingService } from './services/logging.service';
 import { LoadingComponent } from './components/loading/loading.component';
 import { AuthService } from './services/auth.service';
+import { UserProfileService, UserProfile } from './services/user-profile.service';
+import { Subject, takeUntil } from 'rxjs';
 
 // Import ng-zorro-antd components
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -34,17 +36,20 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'angular-config-msal-example';
   config: any;
   isLoggedIn = false;
   loginInProgress = false;
   isAuthenticating = false;
+  userInfo: UserProfile | null = null;
+  private readonly _destroying$ = new Subject<void>();
 
   constructor(
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
-    private readonly logger: LoggingService
+    private readonly logger: LoggingService,
+    private readonly userProfileService: UserProfileService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +59,9 @@ export class AppComponent implements OnInit {
     // Subscribe to auth state changes
     this.authService.isLoggedIn$.subscribe((isLoggedIn: boolean) => {
       this.isLoggedIn = isLoggedIn;
+      if (!isLoggedIn) {
+        this.userInfo = null;
+      }
     });
 
     this.authService.loginInProgress$.subscribe((inProgress: boolean) => {
@@ -63,6 +71,13 @@ export class AppComponent implements OnInit {
     this.authService.isAuthenticating$.subscribe((isAuthenticating: boolean) => {
       this.isAuthenticating = isAuthenticating;
     });
+
+    // Subscribe to user profile changes
+    this.userProfileService.profile$.pipe(
+      takeUntil(this._destroying$)
+    ).subscribe((profile: UserProfile | null) => {
+      this.userInfo = profile;
+    });
   }
 
   login(): void {
@@ -71,5 +86,10 @@ export class AppComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  ngOnDestroy(): void {
+    this._destroying$.next(undefined);
+    this._destroying$.complete();
   }
 }

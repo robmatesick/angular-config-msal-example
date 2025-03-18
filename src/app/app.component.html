@@ -6,6 +6,9 @@
     <div class="header-content">
       <div class="nav-brand">
         <h1>MSAL Example</h1>
+        <span *ngIf="isLoggedIn && userInfo" class="welcome-message">
+          Welcome, {{ userInfo.displayName || userInfo.firstName || 'User' }}!
+        </span>
       </div>
       
       <ul nz-menu nzMode="horizontal" class="main-nav">
@@ -55,12 +58,14 @@
                 <span>View Profile</span>
               </li>
               <li nz-menu-divider></li>
-              <li nz-menu-item (click)="logout()" [nzDisabled]="loginInProgress">
-                <i nz-icon nzType="logout" nzTheme="outline" *ngIf="!loginInProgress"></i>
-                <span *ngIf="!loginInProgress">Logout</span>
-                <span *ngIf="loginInProgress">
-                  <i nz-icon nzType="loading" nzTheme="outline"></i> Logging out...
-                </span>
+              <li nz-menu-item [nzDisabled]="loginInProgress">
+                <button (click)="logout()" [disabled]="loginInProgress" class="menu-button">
+                  <i nz-icon nzType="logout" nzTheme="outline" *ngIf="!loginInProgress"></i>
+                  <span *ngIf="!loginInProgress">Logout</span>
+                  <span *ngIf="loginInProgress">
+                    <i nz-icon nzType="loading" nzTheme="outline"></i> Logging out...
+                  </span>
+                </button>
               </li>
             </ul>
           </nz-dropdown-menu>
