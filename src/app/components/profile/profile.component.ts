@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserProfileService, UserProfile } from '../../services/user-profile.service';
-import { LoggingService } from '../../services/logging.service';
+import { LoggerService } from '../../services/logger.service';
 
 // Import ng-zorro components
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private readonly userProfileService: UserProfileService,
-    private readonly logger: LoggingService
+    private readonly logger: LoggerService
   ) {}
 
   ngOnInit(): void {

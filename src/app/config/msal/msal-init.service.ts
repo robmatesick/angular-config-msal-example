@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { PublicClientApplication, BrowserCacheLocation, AuthenticationResult } from '@azure/msal-browser';
 import { ConfigService } from '../../services/config.service';
-import { LoggingService } from '../../services/logging.service';
+import { LoggerService } from '../../services/logger.service';
 import { CustomNavigationClient } from './custom-navigation.client';
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 
@@ -32,7 +32,7 @@ export function initializeApp(
   configService: ConfigService,
   msalService: MsalService,
   router: Router,
-  logger?: LoggingService // Optional to avoid circular dependency
+  logger?: LoggerService // Optional to avoid circular dependency
 ) {
   return async () => {
     try {

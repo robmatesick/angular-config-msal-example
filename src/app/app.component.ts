@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ConfigService } from './services/config.service';
-import { LoggingService } from './services/logging.service';
+import { LoggerService } from './services/logger.service';
 import { LoadingComponent } from './components/loading/loading.component';
 import { AuthService } from './services/auth.service';
 import { UserProfileService, UserProfile } from './services/user-profile.service';
@@ -48,7 +48,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
-    private readonly logger: LoggingService,
+    private readonly logger: LoggerService,
     private readonly userProfileService: UserProfileService
   ) {}
 

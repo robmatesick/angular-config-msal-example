@@ -10,7 +10,7 @@ import {
   AuthError
 } from '@azure/msal-browser';
 import { BehaviorSubject, Subject, filter, takeUntil } from 'rxjs';
-import { LoggingService } from './logging.service';
+import { LoggerService } from './logger.service';
 import { UserProfileService } from './user-profile.service';
 
 @Injectable({
@@ -31,7 +31,7 @@ export class AuthService implements OnDestroy {
     private readonly msalService: MsalService,
     private readonly msalBroadcastService: MsalBroadcastService,
     private readonly router: Router,
-    private readonly logger: LoggingService,
+    private readonly logger: LoggerService,
     private readonly userProfileService: UserProfileService
   ) {
     this.initializeAuth();

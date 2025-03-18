@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
-import { LoggingService } from './logging.service';
+import { LoggerService } from './logger.service';
 import { BehaviorSubject } from 'rxjs';
 
 export interface UserProfile {
@@ -25,7 +25,7 @@ export class UserProfileService {
 
   constructor(
     private readonly msalService: MsalService,
-    private readonly logger: LoggingService
+    private readonly logger: LoggerService
   ) {}
 
   getCurrentProfile(): UserProfile | null {

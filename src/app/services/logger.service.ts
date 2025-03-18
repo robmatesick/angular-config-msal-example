@@ -19,7 +19,7 @@ export enum LogLevel {
 @Injectable({
   providedIn: 'root'
 })
-export class LoggingService {
+export class LoggerService {
   private currentLogLevel: LogLevel = LogLevel.INFO; // Default level until config loaded
 
   constructor(private configService: ConfigService) {
