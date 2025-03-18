@@ -10,6 +10,7 @@ export interface AppConfig {
     clientId: string;
     tenantId: string;
     clientSecret?: string;
+    scopes: string[];
   };
 }
 

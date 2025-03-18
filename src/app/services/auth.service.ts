@@ -7,11 +7,14 @@ import {
   EventType, 
   InteractionStatus,
   BrowserAuthError,
-  AuthError
+  AuthError,
+  AccountInfo
 } from '@azure/msal-browser';
-import { BehaviorSubject, Subject, filter, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, filter, takeUntil, Observable, from } from 'rxjs';
 import { LoggerService } from './logger.service';
 import { UserProfileService } from './user-profile.service';
+import { ConfigService } from './config.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,25 +24,39 @@ export class AuthService implements OnDestroy {
   private readonly _isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private readonly _isAuthenticating$ = new BehaviorSubject<boolean>(false);
   private readonly _loginInProgress$ = new BehaviorSubject<boolean>(false);
+  private readonly _accessToken$ = new BehaviorSubject<string | null>(null);
+  private _scopes: string[] = [];
 
   // Public observables
   readonly isLoggedIn$ = this._isLoggedIn$.asObservable();
   readonly isAuthenticating$ = this._isAuthenticating$.asObservable();
   readonly loginInProgress$ = this._loginInProgress$.asObservable();
+  readonly accessToken$ = this._accessToken$.asObservable();
 
   constructor(
     private readonly msalService: MsalService,
     private readonly msalBroadcastService: MsalBroadcastService,
     private readonly router: Router,
     private readonly logger: LoggerService,
-    private readonly userProfileService: UserProfileService
+    private readonly userProfileService: UserProfileService,
+    private readonly configService: ConfigService
   ) {
     this.initializeAuth();
   }
 
-  private initializeAuth(): void {
+  private async initializeAuth(): Promise<void> {
     this.logger.info('Initializing authentication service');
     this._isAuthenticating$.next(true);
+
+    try {
+      const config = await this.configService.getConfig();
+      this._scopes = config.entraIdAuth.scopes;
+      this.logger.debug('Scopes loaded from configuration:', this._scopes);
+    } catch (error) {
+      this.logger.error('Error loading scopes from configuration:', error);
+      // Fallback to default scope if config fails to load
+      this._scopes = ['User.Read'];
+    }
 
     // Handle the redirect response
     this.msalService.instance.handleRedirectPromise().then(
@@ -103,10 +120,12 @@ export class AuthService implements OnDestroy {
     if (activeAccount) {
       this._isLoggedIn$.next(true);
       this.userProfileService.loadUserProfile();
+      this.updateAccessToken(activeAccount);
       this.logger.info(`User logged in: ${activeAccount.username}`);
     } else {
       this._isLoggedIn$.next(false);
       this.userProfileService.clearProfile();
+      this._accessToken$.next(null);
       this.logger.info('No active user account found');
     }
 
@@ -114,8 +133,43 @@ export class AuthService implements OnDestroy {
     if (this._isLoggedIn$.value && accounts.length === 0) {
       this._isLoggedIn$.next(false);
       this.userProfileService.clearProfile();
+      this._accessToken$.next(null);
       this.logger.warn('Login state inconsistency detected and corrected');
     }
+  }
+
+  private async updateAccessToken(account: AccountInfo): Promise<void> {
+    try {
+      const tokenResponse = await this.msalService.instance.acquireTokenSilent({
+        scopes: this._scopes,
+        account: account
+      });
+      this._accessToken$.next(tokenResponse.accessToken);
+      this.logger.debug('Access token updated successfully');
+    } catch (error) {
+      this.logger.error('Error acquiring access token:', error);
+      this._accessToken$.next(null);
+    }
+  }
+
+  /**
+   * Gets the current access token as an Observable
+   * @returns Observable<string | null> The current access token or null if not available
+   */
+  getAccessToken(): Observable<string | null> {
+    return this.accessToken$;
+  }
+
+  /**
+   * Gets the current access token as a Promise
+   * @returns Promise<string | null> The current access token or null if not available
+   */
+  async getAccessTokenAsync(): Promise<string | null> {
+    return new Promise((resolve) => {
+      this.accessToken$.pipe(takeUntil(this._destroying$)).subscribe(token => {
+        resolve(token);
+      });
+    });
   }
 
   login(): void {
@@ -170,6 +224,7 @@ export class AuthService implements OnDestroy {
       
       this._isLoggedIn$.next(false);
       this.userProfileService.clearProfile();
+      this._accessToken$.next(null);
       this.checkAndSetActiveAccount();
       this.router.navigate(['/']);
       this.logger.info('Logout completed successfully');
