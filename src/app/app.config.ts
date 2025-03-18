@@ -18,8 +18,8 @@ import {
   MSALInstanceFactory, 
   MSALGuardConfigFactory, 
   MSALInterceptorConfigFactory 
-} from './config/msal/msal-config.factories';
-import { initializeApp } from './config/msal/msal-init.service';
+} from './auth/msal/msal-config.factories';
+import { initializeApp } from './auth/msal/msal-init.service';
 
 // Import Ng-Zorro
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -27,7 +27,7 @@ import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 // Import our custom icon providers
-import { IconProviders } from './config/icon-registry';
+import { IconProviders } from './icon-registry';
 
 // Register locale data
 registerLocaleData(en);
