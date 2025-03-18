@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: #f8f9fa;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
@@ -23,13 +23,13 @@
 
 .nav-links {
   display: flex;
-  gap: 1rem;
+  gap: 12rem;
 }
 
 .nav-links a {
   text-decoration: none;
   color: #666;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border-radius: 4px;
   transition: background-color 0.2s;
 }
@@ -44,7 +44,7 @@
 }
 
 .auth-buttons button {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border: none;
   border-radius: 4px;
   background-color: #007bff;

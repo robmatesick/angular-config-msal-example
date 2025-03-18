@@ -1,16 +1,14 @@
-// Import variables from main styles
-$primary-color: #4285f4;
-$primary-dark: #3367d6;
+// Variables
+$primary-color: #1890ff; // Ant Design primary color
+$primary-dark: #096dd9;
 $secondary-color: #f5f5f5;
 $text-color: #333333;
 $text-light: #666666;
 $border-radius: 8px;
-$box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-$transition: all 0.3s ease;
 
 .page-container {
   padding: 20px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -24,14 +22,6 @@ $transition: all 0.3s ease;
     font-weight: 600;
   }
   
-  .header-underline {
-    height: 4px;
-    width: 60px;
-    background-color: $primary-color;
-    border-radius: 2px;
-    margin-bottom: 15px;
-  }
-  
   .admin-subtitle {
     font-size: 1.1rem;
     color: $text-light;
@@ -40,18 +30,35 @@ $transition: all 0.3s ease;
 }
 
 .admin-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
   margin-bottom: 30px;
+}
+
+// Override some ng-zorro-antd styles
+:host ::ng-deep {
+  .ant-card {
+    border-radius: $border-radius;
+    height: 100%;
+    
+    &:hover {
+      box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08),
+                  0 9px 28px 0 rgba(0, 0, 0, 0.05),
+                  0 12px 48px 16px rgba(0, 0, 0, 0.03);
+    }
+  }
+  
+  .ant-card-meta-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
 }
 
 .info-card {
   background-color: white;
   border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: $transition;
+  transition: all 0.3s ease;
   
   &:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -111,8 +118,9 @@ $transition: all 0.3s ease;
   background-color: $secondary-color;
   border-radius: $border-radius;
   overflow: hidden;
+  margin-top: 16px;
   
-  pre {
+  .config-json {
     margin: 0;
     padding: 15px;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -121,11 +129,13 @@ $transition: all 0.3s ease;
     word-break: break-word;
     max-height: 400px;
     overflow: auto;
+    background-color: #f6f8fa; // GitHub-like code block background
+    border: 1px solid #eaecef;
   }
 }
 
 @media (max-width: 768px) {
   .admin-panel {
-    grid-template-columns: 1fr;
+    display: block;
   }
 } 

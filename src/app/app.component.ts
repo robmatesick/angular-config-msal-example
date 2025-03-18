@@ -16,6 +16,14 @@ import {
 import { Subject, filter, takeUntil } from 'rxjs';
 import { LoadingComponent } from './components/loading/loading.component';
 
+// Import ng-zorro-antd components
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+
 interface UserInfo {
   displayName?: string;
   email?: string;
@@ -25,7 +33,20 @@ interface UserInfo {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LoadingComponent],
+  imports: [
+    CommonModule, 
+    RouterOutlet, 
+    RouterLink, 
+    RouterLinkActive, 
+    LoadingComponent,
+    // Add ng-zorro-antd modules
+    NzLayoutModule,
+    NzMenuModule,
+    NzButtonModule,
+    NzIconModule,
+    NzAvatarModule,
+    NzDropDownModule
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -38,7 +59,6 @@ export class AppComponent implements OnInit, OnDestroy {
   userInfo: UserInfo | null = null;
   private readonly _destroying$ = new Subject<void>();
   private redirectUrl: string | null = null;
-  isDropdownOpen = false;
 
   constructor(
     private configService: ConfigService,
@@ -224,20 +244,5 @@ export class AppComponent implements OnInit, OnDestroy {
       // Reset loginInProgress after logout attempts
       this.loginInProgress = false;
     }
-  }
-
-  toggleDropdown(event?: MouseEvent): void {
-    if (event) {
-      // Stop event from propagating to document
-      event.stopPropagation();
-    }
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  // Close dropdown when clicking outside
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    // Close dropdown when clicking outside
-    this.isDropdownOpen = false;
   }
 }

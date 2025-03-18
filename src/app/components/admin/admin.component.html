@@ -1,31 +1,41 @@
 <div class="page-container">
   <div class="admin-header">
     <h2>Admin Dashboard</h2>
-    <div class="header-underline"></div>
+    <nz-divider nzType="horizontal" class="header-underline"></nz-divider>
     <p class="admin-subtitle">Welcome to the protected admin area!</p>
   </div>
   
-  <div class="admin-panel">
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-icon secure-icon"></div>
-        <h3>Protected Content</h3>
-      </div>
-      <div class="card-content">
-        <p>This page is only accessible to authenticated users. If you can see this content, your authentication was successful.</p>
-      </div>
+  <div nz-row [nzGutter]="16" class="admin-panel">
+    <div nz-col [nzSpan]="12">
+      <nz-card>
+        <nz-card-meta 
+          [nzTitle]="secureTitle" 
+          [nzDescription]="secureDesc">
+        </nz-card-meta>
+        <ng-template #secureTitle>
+          <span><i nz-icon nzType="lock" nzTheme="outline"></i> Protected Content</span>
+        </ng-template>
+        <ng-template #secureDesc>
+          <p>This page is only accessible to authenticated users. If you can see this content, your authentication was successful.</p>
+        </ng-template>
+      </nz-card>
     </div>
     
-    <div class="info-card">
-      <div class="card-header">
-        <div class="card-icon config-icon"></div>
-        <h3>Current Configuration</h3>
-      </div>
-      <div class="card-content">
-        <div class="config-container">
-          <pre>{{ config | json }}</pre>
-        </div>
-      </div>
+    <div nz-col [nzSpan]="12">
+      <nz-card>
+        <nz-card-meta 
+          [nzTitle]="configTitle" 
+          [nzDescription]="configDesc">
+        </nz-card-meta>
+        <ng-template #configTitle>
+          <span><i nz-icon nzType="setting" nzTheme="outline"></i> Current Configuration</span>
+        </ng-template>
+        <ng-template #configDesc>
+          <div class="config-container">
+            <pre class="config-json">{{ config | json }}</pre>
+          </div>
+        </ng-template>
+      </nz-card>
     </div>
   </div>
 </div> 

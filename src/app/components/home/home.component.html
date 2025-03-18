@@ -1,30 +1,48 @@
 <div class="page-container">
-  <div class="welcome-card">
+  <nz-card class="welcome-card">
     <div class="welcome-header">
       <h2>Welcome to MSAL Example</h2>
-      <div class="welcome-underline"></div>
+      <nz-divider nzType="horizontal" class="welcome-underline"></nz-divider>
     </div>
     <p class="welcome-text">This is a public page that demonstrates Microsoft Authentication Library integration with Angular.</p>
     
-    <div class="feature-section">
-      <div class="feature-item">
-        <div class="feature-icon secure-icon"></div>
-        <h3>Secure Authentication</h3>
-        <p>Integrated with Microsoft Identity Platform for robust, enterprise-grade authentication.</p>
+    <div nz-row [nzGutter]="16" class="feature-section">
+      <div nz-col [nzSpan]="12">
+        <nz-card class="feature-item">
+          <nz-card-meta 
+            [nzTitle]="secureTitle" 
+            [nzDescription]="secureDesc">
+          </nz-card-meta>
+          <ng-template #secureTitle>
+            <span><i nz-icon nzType="safety-certificate" nzTheme="outline"></i> Secure Authentication</span>
+          </ng-template>
+          <ng-template #secureDesc>
+            <p>Integrated with Microsoft Identity Platform for robust, enterprise-grade authentication.</p>
+          </ng-template>
+        </nz-card>
       </div>
-      <div class="feature-item">
-        <div class="feature-icon angular-icon"></div>
-        <h3>Modern Angular</h3>
-        <p>Built with the latest Angular features and best practices for optimal performance.</p>
+      <div nz-col [nzSpan]="12">
+        <nz-card class="feature-item">
+          <nz-card-meta 
+            [nzTitle]="angularTitle" 
+            [nzDescription]="angularDesc">
+          </nz-card-meta>
+          <ng-template #angularTitle>
+            <span><i nz-icon nzType="code" nzTheme="outline"></i> Modern Angular</span>
+          </ng-template>
+          <ng-template #angularDesc>
+            <p>Built with the latest Angular features and best practices for optimal performance.</p>
+          </ng-template>
+        </nz-card>
       </div>
     </div>
     
     <div class="navigation-section">
       <p>Ready to see protected content?</p>
-      <a routerLink="/admin" class="nav-button">
-        <span class="button-icon"></span>
+      <button nz-button nzType="primary" routerLink="/admin">
+        <i nz-icon nzType="dashboard" nzTheme="outline"></i>
         Go to Admin Dashboard
-      </a>
+      </button>
     </div>
-  </div>
+  </nz-card>
 </div> 

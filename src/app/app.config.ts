@@ -21,6 +21,17 @@ import {
 } from './config/msal/msal-config.factories';
 import { initializeApp } from './config/msal/msal-init.service';
 
+// Import Ng-Zorro
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+// Import our custom icon providers
+import { IconProviders } from './config/icon-registry';
+
+// Register locale data
+registerLocaleData(en);
+
 export const appConfig: ApplicationConfig = {
   providers: [
     ConfigService,
@@ -38,7 +49,14 @@ export const appConfig: ApplicationConfig = {
       multi: true
     },
     provideRouter(routes),
-    importProvidersFrom(HttpClientModule, MsalModule),
+    importProvidersFrom(
+      HttpClientModule, 
+      MsalModule,
+      BrowserAnimationsModule
+    ),
+    { provide: NZ_I18N, useValue: en_US },
+    // Add the icon providers
+    ...IconProviders,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,

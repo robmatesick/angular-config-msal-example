@@ -1,59 +1,70 @@
 <!-- Show loading component during authentication -->
 <app-loading *ngIf="isAuthenticating"></app-loading>
 
-<div class="app-container" [class.blur]="isAuthenticating">
-  <header class="main-header">
+<nz-layout class="app-container" [class.blur]="isAuthenticating">
+  <nz-header class="main-header">
     <div class="header-content">
       <div class="nav-brand">
         <h1>MSAL Example</h1>
       </div>
       
-      <nav class="main-nav">
-        <div class="nav-links">
+      <ul nz-menu nzMode="horizontal" class="main-nav">
+        <li nz-menu-item>
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-            <i class="nav-icon home-icon"></i>
+            <i nz-icon nzType="home" nzTheme="outline"></i>
             <span>Home</span>
           </a>
+        </li>
+        <li nz-menu-item>
           <a routerLink="/admin" routerLinkActive="active">
-            <i class="nav-icon admin-icon"></i>
+            <i nz-icon nzType="team" nzTheme="outline"></i>
             <span>Admin</span>
           </a>
-        </div>
-      </nav>
+        </li>
+      </ul>
       
       <div class="auth-section">
-        <button *ngIf="!isLoggedIn" (click)="login()" [disabled]="loginInProgress" class="btn login-button">
-          <i class="btn-icon login-icon"></i>
+        <button *ngIf="!isLoggedIn" 
+                nz-button 
+                nzType="primary" 
+                (click)="login()" 
+                [nzLoading]="loginInProgress">
+          <i nz-icon nzType="login" nzTheme="outline" *ngIf="!loginInProgress"></i>
           <span *ngIf="!loginInProgress">Login</span>
-          <span *ngIf="loginInProgress" class="spinner-text">
-            <span class="spinner"></span> Logging in...
-          </span>
+          <span *ngIf="loginInProgress">Logging in...</span>
         </button>
         
         <div *ngIf="isLoggedIn" class="user-dropdown">
-          <div class="user-avatar" *ngIf="userInfo" (click)="toggleDropdown($event)">
-            {{ userInfo.displayName?.charAt(0) || 'U' }}
-          </div>
-          <div class="dropdown-content" [class.show-dropdown]="isDropdownOpen" (click)="$event.stopPropagation()">
-            <div class="dropdown-user-info">
-              <p class="user-name">{{ userInfo?.displayName }}</p>
-              <p class="user-email">{{ userInfo?.email }}</p>
-            </div>
-            <div class="dropdown-divider"></div>
-            <button (click)="logout()" [disabled]="loginInProgress" class="btn logout-button">
-              <i class="btn-icon logout-icon"></i>
-              <span *ngIf="!loginInProgress">Logout</span>
-              <span *ngIf="loginInProgress" class="spinner-text">
-                <span class="spinner"></span> Logging out...
-              </span>
-            </button>
-          </div>
+          <a nz-dropdown [nzDropdownMenu]="userMenu">
+            <nz-avatar 
+              *ngIf="userInfo" 
+              nzSize="large"
+              [nzText]="userInfo.displayName?.charAt(0) || 'U'">
+            </nz-avatar>
+          </a>
+          
+          <nz-dropdown-menu #userMenu="nzDropdownMenu">
+            <ul nz-menu>
+              <div class="dropdown-user-info">
+                <p class="user-name">{{ userInfo?.displayName }}</p>
+                <p class="user-email">{{ userInfo?.email }}</p>
+              </div>
+              <li nz-menu-divider></li>
+              <li nz-menu-item (click)="logout()" [nzDisabled]="loginInProgress">
+                <i nz-icon nzType="logout" nzTheme="outline" *ngIf="!loginInProgress"></i>
+                <span *ngIf="!loginInProgress">Logout</span>
+                <span *ngIf="loginInProgress">
+                  <i nz-icon nzType="loading" nzTheme="outline"></i> Logging out...
+                </span>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
         </div>
       </div>
     </div>
-  </header>
+  </nz-header>
 
-  <main class="content-area">
+  <nz-content class="content-area">
     <router-outlet></router-outlet>
-  </main>
-</div>
+  </nz-content>
+</nz-layout>
