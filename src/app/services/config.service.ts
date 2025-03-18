@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpBackend } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class ConfigService {
   private config: AppConfig | null = null;
   private readonly configUrl = '/config/app-config.json';
   private loadConfigPromise: Promise<void> | null = null;
-  private http: HttpClient;
+  private readonly http: HttpClient;
 
   constructor(handler: HttpBackend) {
     // Create HttpClient without interceptors
