@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-admin',
@@ -12,9 +12,13 @@ import { ActivatedRoute } from '@angular/router';
 export class AdminComponent implements OnInit {
   config: any;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private configService: ConfigService) {}
 
-  ngOnInit() {
-    this.config = this.route.snapshot.data['config'];
+  async ngOnInit() {
+    try {
+      this.config = await this.configService.getConfig();
+    } catch (error) {
+      console.error('Error loading configuration in admin component:', error);
+    }
   }
 } 

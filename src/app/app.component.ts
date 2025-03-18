@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ConfigService } from './services/config.service';
+import { LoggingService } from './services/logging.service';
 import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { 
   AuthenticationResult, 
@@ -42,13 +43,15 @@ export class AppComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private msalService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
-    private router: Router
+    private router: Router,
+    private logger: LoggingService
   ) {
     // Config will be loaded by APP_INITIALIZER before constructor runs
     this.config = this.configService.getConfig();
   }
 
   ngOnInit(): void {
+    this.logger.info('App component initializing');
     // Set authenticating state to true initially
     this.isAuthenticating = true;
 
@@ -56,11 +59,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.msalService.instance.handleRedirectPromise().then(
       (response: AuthenticationResult | null) => {
         if (response) {
+          this.logger.debug('Received authentication result from redirect');
           this.checkAndSetActiveAccount();
         }
       }
     ).catch((error: Error) => {
-      console.error('Error handling redirect:', error);
+      this.logger.error('Error handling redirect:', error);
     }).finally(() => {
       this.isAuthenticating = false;
       this.checkAndSetActiveAccount();
@@ -73,6 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
         takeUntil(this._destroying$)
       )
       .subscribe((status) => {
+        this.logger.debug(`Auth interaction status changed: ${status}`);
         this.loginInProgress = status === InteractionStatus.Login;
         this.checkAndSetActiveAccount();
       });
@@ -88,6 +93,7 @@ export class AppComponent implements OnInit, OnDestroy {
         takeUntil(this._destroying$)
       )
       .subscribe((result: EventMessage) => {
+        this.logger.debug(`Auth event received: ${result.eventType}`);
         if (result.eventType === EventType.LOGIN_SUCCESS || result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
           const payload = result.payload as AuthenticationResult;
           this.msalService.instance.setActiveAccount(payload.account);
@@ -97,6 +103,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.logger.debug('App component destroying');
     this._destroying$.next(undefined);
     this._destroying$.complete();
   }
@@ -111,6 +118,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (accounts.length > 0) {
         activeAccount = accounts[0];
         this.msalService.instance.setActiveAccount(activeAccount);
+        this.logger.debug(`Setting active account: ${activeAccount.username}`);
       }
     }
 
@@ -122,9 +130,11 @@ export class AppComponent implements OnInit, OnDestroy {
         email: activeAccount.username,
         username: activeAccount.username
       };
+      this.logger.info(`User logged in: ${activeAccount.username}`);
     } else {
       this.isLoggedIn = false;
       this.userInfo = null;
+      this.logger.info('No active user account found');
     }
 
     // Double check login state against accounts
@@ -132,12 +142,13 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isLoggedIn && accounts.length === 0) {
       this.isLoggedIn = false;
       this.userInfo = null;
+      this.logger.warn('Login state inconsistency detected and corrected');
     }
   }
 
   login() {
     if (this.loginInProgress) {
-      console.log('Login already in progress');
+      this.logger.info('Login already in progress');
       return;
     }
 
@@ -146,16 +157,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Store current URL before login redirect if it's not the home page
     if (this.router.url !== '/' && this.router.url !== '/home') {
-      console.log('DEBUG: Storing URL before login:', this.router.url);
+      this.logger.debug(`Storing URL before login: ${this.router.url}`);
       sessionStorage.setItem('redirectUrl', this.router.url);
     }
 
+    this.logger.info('Initiating login redirect');
     this.msalService.loginRedirect().subscribe({
       error: (error: AuthError) => {
         if (error instanceof BrowserAuthError && error.errorCode === 'interaction_in_progress') {
-          console.log('Login interaction already in progress');
+          this.logger.warn('Login interaction already in progress');
         } else {
-          console.error('Error during login:', error);
+          this.logger.error('Error during login:', error);
         }
         // Reset loginInProgress if there's an error
         this.loginInProgress = false;
@@ -165,7 +177,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logout() {
     if (this.loginInProgress) {
-      console.log('Cannot logout while login is in progress');
+      this.logger.warn('Cannot logout while login is in progress');
       return;
     }
 
@@ -173,6 +185,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.loginInProgress = true;
 
     try {
+      this.logger.info('Initiating logout process');
       // Clear any stored redirect URL
       sessionStorage.removeItem('redirectUrl');
       
@@ -181,6 +194,7 @@ export class AppComponent implements OnInit, OnDestroy {
       
       // Clear active account first
       this.msalService.instance.setActiveAccount(null);
+      this.logger.debug('Active account cleared');
 
       // Then clear the cache for each account
       accounts.forEach(account => {
@@ -188,6 +202,7 @@ export class AppComponent implements OnInit, OnDestroy {
           account: account,
           correlationId: account.homeAccountId
         });
+        this.logger.debug(`Cache cleared for account: ${account.username}`);
       });
       
       // Clear local state
@@ -199,8 +214,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
       // Navigate to home using Angular router
       this.router.navigate(['/']);
+      this.logger.info('Logout completed successfully');
     } catch (error) {
-      console.error('Error during logout:', error);
+      this.logger.error('Error during logout:', error);
       // Try to recover state
       this.checkAndSetActiveAccount();
     } finally {

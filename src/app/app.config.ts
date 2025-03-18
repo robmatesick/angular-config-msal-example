@@ -13,6 +13,7 @@ import {
   MsalBroadcastService
 } from '@azure/msal-angular';
 import { ConfigService } from './services/config.service';
+import { LoggingService } from './services/logging.service';
 import { 
   MSALInstanceFactory, 
   MSALGuardConfigFactory, 
@@ -23,6 +24,7 @@ import { initializeApp } from './config/msal/msal-init.service';
 export const appConfig: ApplicationConfig = {
   providers: [
     ConfigService,
+    LoggingService,
     {
       provide: MSAL_INSTANCE,
       useFactory: MSALInstanceFactory,
@@ -32,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [ConfigService, MsalService, Router],
+      deps: [ConfigService, MsalService, Router, LoggingService],
       multi: true
     },
     provideRouter(routes),

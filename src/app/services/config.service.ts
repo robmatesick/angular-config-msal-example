@@ -9,7 +9,7 @@ export interface AppConfig {
   entraIdAuth: {
     clientId: string;
     tenantId: string;
-    clientSecret: string;
+    clientSecret?: string;
   };
 }
 
@@ -60,5 +60,19 @@ export class ConfigService {
       throw new Error('Configuration not loaded. Ensure loadConfig() has completed successfully.');
     }
     return this.config;
+  }
+
+  /**
+   * Get the log level from the configuration
+   * @returns The log level string or 'info' as default if not found
+   */
+  async getLogLevel(): Promise<string> {
+    try {
+      const config = await this.getConfig();
+      return config.logLevel || 'info';
+    } catch (error) {
+      console.error('Error getting log level from config:', error);
+      return 'info'; // Default to 'info' if config can't be loaded
+    }
   }
 } 
