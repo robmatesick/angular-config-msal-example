@@ -36,7 +36,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: ['user.read']
+      scopes: ['user.read', 'User.Read.All']
     },
     loginFailedRoute: '/'
   };
@@ -44,7 +44,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/*', ['user.read']);
+  protectedResourceMap.set('https://graph.microsoft.com/v1.0/*', ['user.read', 'User.Read.All']);
   
   return {
     interactionType: InteractionType.Redirect,

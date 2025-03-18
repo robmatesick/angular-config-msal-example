@@ -42,7 +42,8 @@
             <nz-avatar 
               *ngIf="userInfo" 
               nzSize="large"
-              [nzText]="userInfo.displayName?.charAt(0) || 'U'">
+              [nzSrc]="userInfo.photoUrl"
+              [nzText]="userInfo.photoUrl ? undefined : (userInfo.displayName?.charAt(0) || 'U')">
             </nz-avatar>
           </a>
           

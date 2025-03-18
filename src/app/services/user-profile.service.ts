@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { LoggerService } from './logger.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 export interface UserProfile {
   displayName?: string;
@@ -13,6 +14,7 @@ export interface UserProfile {
   roles?: string[];
   idToken?: any;
   accessToken?: any;
+  photoUrl?: string;
 }
 
 @Injectable({
@@ -25,7 +27,8 @@ export class UserProfileService {
 
   constructor(
     private readonly msalService: MsalService,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    private readonly http: HttpClient
   ) {}
 
   getCurrentProfile(): UserProfile | null {
@@ -58,6 +61,7 @@ export class UserProfileService {
       };
 
       this._profile$.next(this.currentProfile);
+      this.loadUserPhoto();
       return this.currentProfile;
     } catch (error) {
       this.logger.error('Error loading user profile', error);
@@ -65,6 +69,82 @@ export class UserProfileService {
       this._profile$.next(null);
       return null;
     }
+  }
+
+  private loadUserPhoto(): void {
+    if (!this.currentProfile?.email) return;
+
+    this.getUserPhoto().subscribe({
+      next: (photoUrl: string) => {
+        if (this.currentProfile) {
+          this.currentProfile.photoUrl = photoUrl;
+          this._profile$.next(this.currentProfile);
+        }
+      },
+      error: (error) => {
+        this.logger.error('Error loading user photo', error);
+      }
+    });
+  }
+
+  getUserPhoto(): Observable<string> {
+    return new Observable(subscriber => {
+      const currentAccount = this.msalService.instance.getActiveAccount();
+      if (!currentAccount) {
+        subscriber.error('No active account');
+        return;
+      }
+
+      this.msalService.acquireTokenSilent({
+        scopes: ['User.Read.All']
+      }).subscribe({
+        next: (response) => {
+          const photoUrl = `https://graph.microsoft.com/v1.0/me/photo/$value`;
+          this.http.get(photoUrl, { responseType: 'blob' }).subscribe({
+            next: (blob) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                subscriber.next(reader.result as string);
+                subscriber.complete();
+              };
+              reader.readAsDataURL(blob);
+            },
+            error: (error) => {
+              subscriber.error(error);
+            }
+          });
+        },
+        error: (error) => {
+          if (error.name === 'InteractionRequiredAuthError') {
+            this.msalService.acquireTokenPopup({
+              scopes: ['User.Read.All']
+            }).subscribe({
+              next: (response) => {
+                const photoUrl = `https://graph.microsoft.com/v1.0/me/photo/$value`;
+                this.http.get(photoUrl, { responseType: 'blob' }).subscribe({
+                  next: (blob) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      subscriber.next(reader.result as string);
+                      subscriber.complete();
+                    };
+                    reader.readAsDataURL(blob);
+                  },
+                  error: (error) => {
+                    subscriber.error(error);
+                  }
+                });
+              },
+              error: (error) => {
+                subscriber.error(error);
+              }
+            });
+          } else {
+            subscriber.error(error);
+          }
+        }
+      });
+    });
   }
 
   getAccountClaims(): { name: string; value: string }[] {
