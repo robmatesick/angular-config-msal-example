@@ -1,4 +1,4 @@
-import { NZ_ICONS, NzIconModule } from 'ng-zorro-antd/icon';
+import { NZ_ICONS } from 'ng-zorro-antd/icon';
 
 // Import the required icon files from @ant-design/icons-angular/icons
 import {
@@ -11,7 +11,11 @@ import {
   LoadingOutline,
   SafetyCertificateOutline,
   CodeOutline,
-  DashboardOutline
+  DashboardOutline,
+  WarningOutline,
+  MailOutline,
+  SolutionOutline,
+  UserOutline
 } from '@ant-design/icons-angular/icons';
 
 // Define the icons that will be used in the application
@@ -25,7 +29,11 @@ export const icons = [
   LoadingOutline,
   SafetyCertificateOutline,
   CodeOutline,
-  DashboardOutline
+  DashboardOutline,
+  WarningOutline,
+  MailOutline,
+  SolutionOutline,
+  UserOutline
 ];
 
 // Export the icon provider configuration

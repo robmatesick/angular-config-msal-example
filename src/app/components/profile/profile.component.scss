@@ -1,0 +1,146 @@
+// Variables
+$primary-color: #1890ff; // Ant Design primary color
+$primary-dark: #096dd9;
+$secondary-color: #f5f5f5;
+$text-color: #333333;
+$text-light: #666666;
+$border-radius: 8px;
+
+.page-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  margin-bottom: 30px;
+  
+  h2 {
+    font-size: 2rem;
+    color: $text-color;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  
+  i {
+    font-size: 40px;
+    color: $primary-color;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: $text-light;
+  }
+}
+
+.error-card {
+  margin-top: 20px;
+  
+  .error-message {
+    text-align: center;
+    padding: 30px 20px;
+    
+    i {
+      font-size: 48px;
+      color: #faad14;
+      margin-bottom: 15px;
+    }
+    
+    h3 {
+      font-size: 20px;
+      color: $text-color;
+      margin: 0 0 10px 0;
+    }
+    
+    p {
+      color: $text-light;
+      margin: 0;
+    }
+  }
+}
+
+.profile-content {
+  margin-bottom: 30px;
+}
+
+.profile-section {
+  margin-bottom: 25px;
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.profile-avatar-area {
+  margin-right: 20px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  font-size: 32px;
+  line-height: 80px;
+  background-color: $primary-color;
+}
+
+.profile-details {
+  h3 {
+    font-size: 24px;
+    margin: 0 0 10px 0;
+    color: $text-color;
+  }
+  
+  p {
+    margin: 0 0 5px 0;
+    color: $text-light;
+    
+    i {
+      margin-right: 5px;
+    }
+  }
+  
+  .job-title {
+    margin-top: 8px;
+    color: $text-light;
+    
+    i {
+      margin-right: 5px;
+    }
+  }
+}
+
+.profile-tabs {
+  margin-top: 20px;
+}
+
+// Override some ng-zorro-antd styles
+:host ::ng-deep {
+  .ant-card {
+    border-radius: $border-radius;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  }
+  
+  .ant-descriptions-title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .ant-tabs-nav {
+    margin-bottom: 20px;
+  }
+  
+  .claim-value {
+    word-break: break-all;
+  }
+}

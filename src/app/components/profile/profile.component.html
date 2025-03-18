@@ -1,0 +1,98 @@
+<div class="page-container">
+  <div class="profile-header">
+    <h2>User Profile</h2>
+    <nz-divider nzType="horizontal" class="header-underline"></nz-divider>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <i nz-icon nzType="loading" nzTheme="outline" nzSpin></i>
+    <p>Loading profile...</p>
+  </div>
+
+  <!-- Profile content when loaded -->
+  <div *ngIf="!isLoading" class="profile-content">
+    <!-- No user found message -->
+    <nz-card *ngIf="!userProfile.displayName" class="error-card">
+      <div class="error-message">
+        <i nz-icon nzType="warning" nzTheme="outline"></i>
+        <h3>No user information available</h3>
+        <p>There appears to be no active user session. Please login to view your profile.</p>
+      </div>
+    </nz-card>
+
+    <!-- User profile data -->
+    <div *ngIf="userProfile.displayName">
+      <div nz-row [nzGutter]="16" class="profile-section">
+        <div nz-col [nzSpan]="24">
+          <nz-card>
+            <div class="profile-header-content">
+              <div class="profile-avatar-area">
+                <nz-avatar 
+                  [nzText]="(userProfile.displayName || 'U').charAt(0)" 
+                  nzSize="large" 
+                  class="profile-avatar">
+                </nz-avatar>
+              </div>
+              <div class="profile-details">
+                <h3 nz-typography>{{ userProfile.displayName }}</h3>
+                <p nz-typography nzType="secondary">
+                  <i nz-icon nzType="mail" nzTheme="outline"></i> {{ userProfile.email }}
+                </p>
+                <div *ngIf="userProfile.jobTitle" class="job-title">
+                  <i nz-icon nzType="solution" nzTheme="outline"></i> {{ userProfile.jobTitle }}
+                </div>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+      </div>
+
+      <!-- Tabs for different sections of the profile -->
+      <nz-tabset class="profile-tabs">
+        <nz-tab nzTitle="Basic Info">
+          <nz-card>
+            <nz-descriptions nzTitle="User Information" nzBordered [nzColumn]="1">
+              <nz-descriptions-item nzTitle="Name">
+                {{ userProfile.displayName }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="First Name">
+                {{ userProfile.firstName || 'Not available' }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="Last Name">
+                {{ userProfile.lastName || 'Not available' }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="Email">
+                {{ userProfile.email }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="Username">
+                {{ userProfile.username }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="Job Title">
+                {{ userProfile.jobTitle || 'Not specified' }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="Roles">
+                <div *ngIf="userProfile.roles && userProfile.roles.length > 0; else noRoles">
+                  <nz-tag *ngFor="let role of userProfile.roles" nzColor="blue">
+                    {{ role }}
+                  </nz-tag>
+                </div>
+                <ng-template #noRoles>No roles assigned</ng-template>
+              </nz-descriptions-item>
+            </nz-descriptions>
+          </nz-card>
+        </nz-tab>
+        
+        <nz-tab nzTitle="Token Claims">
+          <nz-card>
+            <nz-descriptions nzTitle="ID Token Claims" nzBordered [nzColumn]="1">
+              <nz-descriptions-item *ngFor="let claim of accountClaims" [nzTitle]="claim.name">
+                <span class="claim-value">{{ claim.value }}</span>
+              </nz-descriptions-item>
+            </nz-descriptions>
+          </nz-card>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+</div>

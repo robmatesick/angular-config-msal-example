@@ -50,6 +50,11 @@
                 <p class="user-email">{{ userInfo?.email }}</p>
               </div>
               <li nz-menu-divider></li>
+              <li nz-menu-item routerLink="/profile">
+                <i nz-icon nzType="user" nzTheme="outline"></i>
+                <span>View Profile</span>
+              </li>
+              <li nz-menu-divider></li>
               <li nz-menu-item (click)="logout()" [nzDisabled]="loginInProgress">
                 <i nz-icon nzType="logout" nzTheme="outline" *ngIf="!loginInProgress"></i>
                 <span *ngIf="!loginInProgress">Logout</span>

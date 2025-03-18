@@ -27,13 +27,15 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 export class AdminComponent implements OnInit {
   config: any;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  async ngOnInit() {
-    try {
-      this.config = await this.configService.getConfig();
-    } catch (error) {
-      console.error('Error loading configuration in admin component:', error);
-    }
+  ngOnInit(): void {
+    (async () => {
+      try {
+        this.config = await this.configService.getConfig();
+      } catch (error) {
+        console.error('Error loading configuration in admin component:', error);
+      }
+    })();
   }
 } 

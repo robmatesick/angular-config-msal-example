@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ConfigService } from './services/config.service';
@@ -10,11 +10,11 @@ import {
   EventType, 
   InteractionStatus,
   BrowserAuthError,
-  AuthError,
-  AccountInfo
+  AuthError
 } from '@azure/msal-browser';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { LoadingComponent } from './components/loading/loading.component';
+import { UserProfileService } from './services/user-profile.service';
 
 // Import ng-zorro-antd components
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
@@ -23,12 +23,6 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-
-interface UserInfo {
-  displayName?: string;
-  email?: string;
-  username?: string;
-}
 
 @Component({
   selector: 'app-root',
@@ -56,23 +50,26 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   loginInProgress = false;
   isAuthenticating = false;
-  userInfo: UserInfo | null = null;
+  userInfo: any = null;
   private readonly _destroying$ = new Subject<void>();
-  private redirectUrl: string | null = null;
+  private readonly redirectUrl: string | null = null;
 
   constructor(
-    private configService: ConfigService,
-    private msalService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
-    private router: Router,
-    private logger: LoggingService
+    private readonly configService: ConfigService,
+    private readonly msalService: MsalService,
+    private readonly msalBroadcastService: MsalBroadcastService,
+    private readonly router: Router,
+    private readonly logger: LoggingService,
+    private readonly userProfileService: UserProfileService
   ) {
     // Config will be loaded by APP_INITIALIZER before constructor runs
-    this.config = this.configService.getConfig();
+    // Moving config initialization to ngOnInit
   }
 
   ngOnInit(): void {
     this.logger.info('App component initializing');
+    // Load the config
+    this.config = this.configService.getConfig();
     // Set authenticating state to true initially
     this.isAuthenticating = true;
 
@@ -146,15 +143,12 @@ export class AppComponent implements OnInit, OnDestroy {
     // Update login state and user info
     if (activeAccount) {
       this.isLoggedIn = true;
-      this.userInfo = {
-        displayName: activeAccount.name,
-        email: activeAccount.username,
-        username: activeAccount.username
-      };
+      this.userInfo = this.userProfileService.loadUserProfile();
       this.logger.info(`User logged in: ${activeAccount.username}`);
     } else {
       this.isLoggedIn = false;
       this.userInfo = null;
+      this.userProfileService.clearProfile();
       this.logger.info('No active user account found');
     }
 
@@ -163,6 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isLoggedIn && accounts.length === 0) {
       this.isLoggedIn = false;
       this.userInfo = null;
+      this.userProfileService.clearProfile();
       this.logger.warn('Login state inconsistency detected and corrected');
     }
   }
@@ -229,6 +224,7 @@ export class AppComponent implements OnInit, OnDestroy {
       // Clear local state
       this.isLoggedIn = false;
       this.userInfo = null;
+      this.userProfileService.clearProfile();
       
       // Update state one final time
       this.checkAndSetActiveAccount();
